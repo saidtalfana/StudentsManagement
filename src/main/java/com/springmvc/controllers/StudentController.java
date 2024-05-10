@@ -1,6 +1,7 @@
 package com.springmvc.controllers;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;  
 import org.springframework.beans.factory.annotation.Autowired;  
 import org.springframework.stereotype.Controller;
@@ -36,18 +37,26 @@ public class StudentController {
      *  into model object. You need to mention RequestMethod.POST method  
      *  because default request is GET*/  
     @RequestMapping(value="/save",method = RequestMethod.POST)  
-    public String save(@ModelAttribute("student") Student student) {  
-       
-			dao.save(student);
-		
-		
+    public String save(@ModelAttribute("student") Student student){  
+			try {
+				dao.save(student);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         return "redirect:/viewstudent";//will redirect to viewemp request mapping  
     }  
     
     /* It provides list of employees in model object */  
     @RequestMapping("/viewstudent")  
     public String viewStudents(Model model) {  
-        List<Student> list = dao.getStudents();  
+        List<Student> list = new ArrayList<>();
+		try {
+			list = dao.getStudents();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
         model.addAttribute("list", list);
         return "viewstudent";  
     }  
@@ -56,7 +65,13 @@ public class StudentController {
      * The @PathVariable puts URL data into variable.*/  
     @RequestMapping(value="/editstudent/{id}")  
     public String edit(@PathVariable int id, Model model){  
-        Student student = dao.getStudentById(id);  
+        Student student = null;
+		try {
+			student = dao.getStudentById(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
         model.addAttribute("command", student);
         return "studenteditform";  
     }  
@@ -64,14 +79,24 @@ public class StudentController {
     /* It updates model object. */  
     @RequestMapping(value="/editsave",method = RequestMethod.POST)  
     public String editSave(@ModelAttribute("emp") Student student) {  
-        dao.update(student);  
+        try {
+			dao.update(student);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
         return "redirect:/viewstudent";  
     }  
     
     /* It deletes record for the given id in URL and redirects to / */  
     @RequestMapping(value="/deletestudent/{id}",method = RequestMethod.GET)  
     public String delete(@PathVariable int id){  
-        dao.delete(id);  
+        try {
+			dao.delete(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
         return "redirect:/viewstudent";  
     }   
 }  
